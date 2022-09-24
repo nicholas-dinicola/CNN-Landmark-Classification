@@ -52,11 +52,10 @@ def get_data_loaders(
     
     
     data_transforms = {
-        "train": transforms.Compose(
-                        transforms.Resize(resize), 
-                        transforms.CenterCrop(crop), 
-                        
-                        transforms.RandomHorizontalFlip(p=0.5), 
+        "train": transforms.Compose([
+                        transforms.Resize(resize),
+                        transforms.CenterCrop(crop),
+                        transforms.RandomHorizontalFlip(p=0.5),
                         transforms.RandomPerspective(p=0.2), 
                         transforms.RandAugment(
                             num_ops=2,
@@ -64,21 +63,21 @@ def get_data_loaders(
                             interpolation=transforms.InterpolationMode.BILINEAR
                         ),
                         transforms.ToTensor(), 
-                        transforms.Normalize(mean, std),
+                        transforms.Normalize(mean, std)]
                          
                         
         ),
-        "valid": transforms.Compose(
+        "valid": transforms.Compose([
                         transforms.Resize(resize), 
                         transforms.CenterCrop(crop), 
                         transforms.ToTensor(), 
-                        transforms.Normalize(mean, std)
+                        transforms.Normalize(mean, std)]
         ),
-        "test": transforms.Compose(
+        "test": transforms.Compose([
                         transforms.Resize(resize), 
                         transforms.CenterCrop(crop), 
                         transforms.ToTensor(), 
-                        transforms.Normalize(mean, std)
+                        transforms.Normalize(mean, std)]
         ),
     }
 
@@ -165,10 +164,10 @@ def visualize_one_batch(data_loaders, max_n: int = 5):
     # YOUR CODE HERE:
     # obtain one batch of training images
     # First obtain an iterator from the train dataloader
-    #dataiter  = # YOUR CODE HERE
+    dataiter = iter(data_loaders["train"])
     # Then call the .next() method on the iterator you just
     # obtained
-    #images, labels  = # YOUR CODE HERE
+    images, labels = dataiter.next()
 
     # Undo the normalization (for visualization purposes)
     mean, std = compute_mean_and_std()
@@ -183,7 +182,7 @@ def visualize_one_batch(data_loaders, max_n: int = 5):
 
     # YOUR CODE HERE:
     # Get class names from the train data loader
-    #class_names  = # YOUR CODE HERE
+    class_names = dataiter.__class__.__name__.split()
 
     # Convert from BGR (the format used by pytorch) to
     # RGB (the format expected by matplotlib)
