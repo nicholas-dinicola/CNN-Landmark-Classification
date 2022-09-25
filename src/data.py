@@ -10,11 +10,11 @@ import matplotlib.pyplot as plt
 
 
 def get_data_loaders(
-    batch_size: int = 32, 
-    valid_size: float = 0.2, 
-    num_workers: int = -1, 
-    limit: int = -1
-    ):
+        batch_size: int = 32,
+        valid_size: float = 0.2,
+        num_workers: int = -1,
+        limit: int = -1
+):
     """
     Create and returns the train_one_epoch, validation and test data loaders.
 
@@ -49,35 +49,33 @@ def get_data_loaders(
     # HINT: resize the image to 256 first, then crop them to 224, then add the
     # appropriate transforms for that step
     resize, crop = 256, 224
-    
-    
+
     data_transforms = {
         "train": transforms.Compose([
-                        transforms.Resize(resize),
-                        transforms.CenterCrop(crop),
-                        transforms.RandomHorizontalFlip(p=0.5),
-                        transforms.RandomPerspective(p=0.2), 
-                        transforms.RandAugment(
-                            num_ops=2,
-                            magnitude=5,
-                            interpolation=transforms.InterpolationMode.BILINEAR
-                        ),
-                        transforms.ToTensor(), 
-                        transforms.Normalize(mean, std)]
-                         
-                        
+            transforms.Resize(resize),
+            transforms.CenterCrop(crop),
+            transforms.RandomHorizontalFlip(p=0.5),
+            transforms.RandomPerspective(p=0.2),
+            transforms.RandAugment(
+                num_ops=2,
+                magnitude=5,
+                interpolation=transforms.InterpolationMode.BILINEAR
+            ),
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std)]
+
         ),
         "valid": transforms.Compose([
-                        transforms.Resize(resize), 
-                        transforms.CenterCrop(crop), 
-                        transforms.ToTensor(), 
-                        transforms.Normalize(mean, std)]
+            transforms.Resize(resize),
+            transforms.CenterCrop(crop),
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std)]
         ),
         "test": transforms.Compose([
-                        transforms.Resize(resize), 
-                        transforms.CenterCrop(crop), 
-                        transforms.ToTensor(), 
-                        transforms.Normalize(mean, std)]
+            transforms.Resize(resize),
+            transforms.CenterCrop(crop),
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std)]
         ),
     }
 
@@ -111,7 +109,7 @@ def get_data_loaders(
 
     # define samplers for obtaining training and validation batches
     train_sampler = torch.utils.data.SubsetRandomSampler(train_idx)
-    valid_sampler  = torch.utils.data.SubsetRandomSampler(valid_idx)
+    valid_sampler = torch.utils.data.SubsetRandomSampler(valid_idx)
 
     # prepare data loaders
     data_loaders["train"] = torch.utils.data.DataLoader(
@@ -121,9 +119,9 @@ def get_data_loaders(
         num_workers=num_workers,
     )
     data_loaders["valid"] = torch.utils.data.DataLoader(
-        valid_data, 
-        batch_size=batch_size, 
-        sampler=valid_sampler, 
+        valid_data,
+        batch_size=batch_size,
+        sampler=valid_sampler,
         num_workers=num_workers
     )
 
@@ -142,10 +140,10 @@ def get_data_loaders(
 
     data_loaders["test"] = torch.utils.data.DataLoader(
         # YOUR CODE HERE (remember to add shuffle=False as well)
-        test_data, 
-        batch_size=batch_size, 
-        sampler=test_sampler, 
-        num_workers=num_workers, 
+        test_data,
+        batch_size=batch_size,
+        sampler=test_sampler,
+        num_workers=num_workers,
         shuffle=False
     )
 
@@ -182,7 +180,8 @@ def visualize_one_batch(data_loaders, max_n: int = 5):
 
     # YOUR CODE HERE:
     # Get class names from the train data loader
-    class_names = dataiter.__class__.__name__.split()
+    class_names = [item[3:].replace("_", " ")
+                   for item in data_loaders['train'].dataset.classes]
 
     # Convert from BGR (the format used by pytorch) to
     # RGB (the format expected by matplotlib)
@@ -210,8 +209,8 @@ def data_loaders():
 
 
 def test_data_loaders_keys(data_loaders):
-
-    assert set(data_loaders.keys()) == {"train", "valid", "test"}, "The keys of the data_loaders dictionary should be train, valid and test"
+    assert set(data_loaders.keys()) == {"train", "valid",
+                                        "test"}, "The keys of the data_loaders dictionary should be train, valid and test"
 
 
 def test_data_loaders_output_type(data_loaders):
@@ -231,10 +230,9 @@ def test_data_loaders_output_shape(data_loaders):
 
     assert len(images) == 2, f"Expected a batch of size 2, got size {len(images)}"
     assert (
-        len(labels) == 2
+            len(labels) == 2
     ), f"Expected a labels tensor of size 2, got size {len(labels)}"
 
 
 def test_visualize_one_batch(data_loaders):
-
     visualize_one_batch(data_loaders, max_n=2)
